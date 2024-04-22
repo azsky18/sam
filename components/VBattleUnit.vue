@@ -1,5 +1,8 @@
 <template>
-  <div class="relative w-[50px] h-[50px]">
+  <div v-if="unit.realPosition" class="absolute w-[50px] h-[50px] transition-all duration-100 pointer-events-none" :style="{
+    top: unit.realPosition.y + 'px',
+    left: unit.realPosition.x + 'px'
+  }" ref="unitRef">
     <div
       class="unit-shape w-[15px] ml-px absolute top-[5px]"
       :style="{
@@ -26,6 +29,8 @@ const props = defineProps({
   },
 });
 
+const unitRef = ref();
+
 const rotate = computed(() => {
   const direction = props.unit.direction;
   if (direction == "TOP") {
@@ -39,6 +44,10 @@ const rotate = computed(() => {
   } else {
     console.log("Illegal Direction", direction);
   }
+});
+
+onMounted(() => {
+  props.unit.el = unitRef.value;
 });
 </script>
 

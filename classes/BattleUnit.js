@@ -13,6 +13,8 @@ export default class BattleUnit {
   actionPoint;
   state;
 
+  el;
+
   constructor(
     id,
     team,
@@ -47,24 +49,22 @@ export default class BattleUnit {
     return this.battleGame.map.getTile(this.x, this.y);
   }
 
-  get aroundTiles() {
-    const left = this.x - 1;
-    const right = this.x + 1;
-    const top = this.y - 1;
-    const bottom = this.y + 1;
+  get realPosition() {
+    return this.tile.realPosition;
+  }
 
+  get aroundTiles() {
     return [
-      this.battleGame.map.getTile(left, this.y),
-      this.battleGame.map.getTile(right, this.y),
-      this.battleGame.map.getTile(this.x, top),
-      this.battleGame.map.getTile(this.x, bottom),
+      this.battleGame.map.getTile(this.x - 1, this.y),
+      this.battleGame.map.getTile(this.x + 1, this.y),
+      this.battleGame.map.getTile(this.x, this.y - 1),
+      this.battleGame.map.getTile(this.x, this.y + 1),
     ].filter((t) => !!t);
   }
 
   get animations() {
     return this.battleGame.animations;
   }
-
 
   get moveableTiles() {
     const myTile = this.battleGame.map.getTile(this.x, this.y);
@@ -130,21 +130,63 @@ export default class BattleUnit {
     }
   }
 
-  moveTo(x, y) {
+  async move(x, y) {
     const currentTile = this.tile;
     const targetTile = this.battleGame.map.getTile(x, y);
-    const distance = currentTile.distance(targetTile);
 
-    this.x = x;
-    this.y = y;
-    this.actionPoint -= distance;
+    const path = this.findPath(this.actionPoint, currentTile, targetTile)[0];
+    for (let i = 0; i < path.length; i++) {
+      const pathTile = path[i];
+      await this.moveToTile(pathTile);
+    }
+  }
+
+  moveToTile(tile) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        this.x = tile.x;
+        this.y = tile.y;
+        this.actionPoint -= tile.movePoint;
+        resolve();
+      }, 100);
+    });
+  }
+
+  findPath(actionPoint, currentTile, targetTile) {
+    if (currentTile.x == targetTile.x && currentTile.y == targetTile.y) {
+      return "SUCCESS";
+    }
+
+    if (actionPoint < currentTile.movePoint) {
+      return "FAIL";
+    }
+
+    return currentTile.aroundTiles
+      .flatMap((tile) => {
+        const newPath = this.findPath(
+          actionPoint - tile.movePoint,
+          tile,
+          targetTile
+        );
+
+        if (newPath == "SUCCESS") {
+          return [[tile]];
+        } else if (newPath == "FAIL") {
+          return null;
+        } else {
+          return newPath;
+        }
+      })
+      .filter((a) => !!a)
+      .map((path) => [currentTile, ...path]);
   }
 
   async attackTo(defender) {
     const times = this.actionPoint;
 
     for (let i = 0; i < times; i++) {
-      const position = this.getRealPosition();
+      const position = this.realPosition;
+      new Audio("/_nuxt/assets/sound/slash.mp3").play();
       await this.animations.explosion(position.x, position.y - 25);
 
       const attackSuccesser = this.amount * 0.3;
@@ -199,9 +241,5 @@ export default class BattleUnit {
     const index = this.battleGame.units.findIndex((unit) => unit.id == this.id);
     this.battleGame.units.splice(index, 1);
     console.log(this.name + " 괴멸");
-  }
-
-  getRealPosition() {
-    return this.tile.getRealPosition();
   }
 }

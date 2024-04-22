@@ -2,6 +2,7 @@ import BattleMap from "~/classes/BattleMap.js";
 import BattleTeam from "~/classes/BattleTeam.js";
 import BattleUnit from "~/classes/BattleUnit.js";
 import BattleAi from "~/classes/BattleAi.js";
+import Sounds from "~/classes/Sounds.js";
 
 export default class BattleGame {
   map;
@@ -17,6 +18,7 @@ export default class BattleGame {
 
   ai;
   animations;
+  sounds;
 
   constructor() {
     this.map = new BattleMap(25, 25);
@@ -78,6 +80,8 @@ export default class BattleGame {
     this.map.tiles.forEach((tile) => (tile.battleGame = this));
     this.teams.forEach((team) => (team.battleGame = this));
     this.units.forEach((unit) => (unit.battleGame = this));
+
+    this.sounds = new Sounds();
   }
 
   get playerTeam() {

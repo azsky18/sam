@@ -14,6 +14,10 @@ export default class BattleTile {
     this.state = "NORMAL";
   }
 
+  get map() {
+    return this.battleGame.map;
+  }
+
   get isLocateUnit() {
     return this.battleGame.units.some(
       (unit) => unit.x == this.x && unit.y == this.y
@@ -26,12 +30,33 @@ export default class BattleTile {
     );
   }
 
+  get aroundTiles() {
+    return [
+      this.map.getTile(this.x - 1, this.y),
+      this.map.getTile(this.x + 1, this.y),
+      this.map.getTile(this.x, this.y - 1),
+      this.map.getTile(this.x, this.y + 1),
+    ].filter((t) => !!t);
+  }
+
+  get realPosition() {
+    if (!this.el) {
+      return null;
+    }
+
+    const rect = this.el.getBoundingClientRect();
+    return {
+      x: rect.x,
+      y: rect.y,
+    };
+  }
+
   select() {
     if (this.battleGame.state == "ENEMY_UNIT_INFO") {
-      battleGame.toNormalState();
+      this.battleGame.toNormalState();
       return;
     }
-  
+
     if (this.battleGame.state == "NORMAL") {
       if (this.isLocateUnit) {
         this.locateUnit.select();
@@ -44,7 +69,7 @@ export default class BattleTile {
         attacker.attackTo(defender);
       } else if (this.state == "ENABLE_MOVE") {
         const selectedUnit = this.battleGame.selectedUnit;
-        selectedUnit.moveTo(this.x, this.y);
+        selectedUnit.move(this.x, this.y);
         this.battleGame.toNormalState();
       }
     }
@@ -54,11 +79,5 @@ export default class BattleTile {
     return Math.abs(this.x - other.x) + Math.abs(this.y - other.y);
   }
 
-  getRealPosition() {
-    const rect = this.el.getBoundingClientRect();
-    return {
-      x: rect.x,
-      y: rect.y,
-    };
-  }
+  moveDistance(other) {}
 }

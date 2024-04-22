@@ -16,9 +16,9 @@ export default class BattleAi {
           return;
         }
 
-        const attackableUnits = unit
-          .attackableTiles
-          .map((tile) => tile.locateUnit);
+        const attackableUnits = unit.attackableTiles.map(
+          (tile) => tile.locateUnit
+        );
 
         if (attackableUnits.length > 0) {
           await unit.attackTo(attackableUnits[0]);
@@ -37,7 +37,7 @@ export default class BattleAi {
             .reduce((r, v, i, a) => (v >= a[r] ? r : i), -1);
           const moveTile = moveableTiles[minValueMoveableTileIndex];
 
-          unit.moveTo(moveTile.x, moveTile.y);
+          await unit.move(moveTile.x, moveTile.y);
         }
       }
     }

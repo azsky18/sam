@@ -25,4 +25,8 @@ export default class Animations {
   async explosion(x, y) {
     return this.runAnimation(this.items[0], x, y);
   }
+
+  async move(object, x, y) {
+    //object.el
+  }
 }

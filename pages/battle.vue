@@ -13,7 +13,7 @@
   </div>
 
   <div class="h-screen relative w-[calc(100%-200px)] overflow-hidden">
-    <VBattleMap :map="battleGame.map" />
+    <VBattleMap :map="battleGame.map" :units="battleGame.units" />
 
     <template v-for="ani in animations.items">
       <VSpriteAnimation

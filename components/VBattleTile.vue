@@ -1,8 +1,7 @@
 <template>
-  <a
-    href="javascript:void(0)"
-    ref="thisTile"
-    class="w-[50px] h-[50px] border-[1px] border-red-50 relative"
+  <div
+    ref="tileRef"
+    class="tile w-[50px] h-[50px] border-[1px] border-red-50 relative"
     :class="{
       'bg-black': ['DISABLE', 'NORMAL'].includes(tile.state),
       'bg-gray-200': ['ENABLE_MOVE'].includes(tile.state),
@@ -17,7 +16,7 @@
       >({{ tile.x }}, {{ tile.y }})</span
     >
     <slot></slot>
-  </a>
+  </div>
 </template>
 
 <script setup>
@@ -28,7 +27,7 @@ const props = defineProps({
   },
 });
 
-const thisTile = ref();
+const tileRef = ref();
 
 const battleGame = useBattleGame();
 const animations = useAnimations();
@@ -61,6 +60,6 @@ const cancelTile = () => {
 };
 
 onMounted(() => {
-  props.tile.el = thisTile.value;
+  props.tile.el = tileRef.value;
 });
 </script>
