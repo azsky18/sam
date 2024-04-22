@@ -43,6 +43,10 @@ export default class BattleUnit {
     return this.team.color;
   }
 
+  get tile() {
+    return this.battleGame.map.getTile(this.x, this.y);
+  }
+
   get aroundTiles() {
     const left = this.x - 1;
     const right = this.x + 1;
@@ -61,18 +65,15 @@ export default class BattleUnit {
     return this.battleGame.animations;
   }
 
-  getLocateTile() {
-    return this.battleGame.map.getTile(this.x, this.y);
-  }
 
-  getMoveableTiles() {
+  get moveableTiles() {
     const myTile = this.battleGame.map.getTile(this.x, this.y);
     return this.battleGame.map
       .getTilesByDistance(myTile, this.actionPoint)
       .filter((tile) => !tile.isLocateUnit);
   }
 
-  getAttackableTiles() {
+  get attackableTiles() {
     const myTile = this.battleGame.map.getTile(this.x, this.y);
     if (this.direction == "TOP") {
       return [this.battleGame.map.getTile(this.x, this.y - 1)].filter(
@@ -102,8 +103,35 @@ export default class BattleUnit {
     //   );
   }
 
+  select() {
+    if (this.actionPoint <= 0) {
+      console.log("활동력이 없음");
+      return;
+    }
+
+    if (this.team.id == this.battleGame.playerTeam.id) {
+      this.battleGame.state = "UNIT_SELECT";
+      this.battleGame.selectedUnit = this;
+
+      this.changeTileState("UNIT_SELECT");
+    } else {
+      this.battleGame.state = "ENEMY_UNIT_INFO";
+      this.battleGame.selectedUnit = this;
+
+      this.changeTileState("UNIT_SELECT");
+    }
+  }
+
+  changeTileState(state) {
+    if (state == "UNIT_SELECT") {
+      this.battleGame.map.tiles.forEach((tile) => (tile.state = "DISABLE"));
+      this.moveableTiles.forEach((tile) => (tile.state = "ENABLE_MOVE"));
+      this.attackableTiles.forEach((tile) => (tile.state = "ENABLE_ATTACK"));
+    }
+  }
+
   moveTo(x, y) {
-    const currentTile = this.getLocateTile();
+    const currentTile = this.tile;
     const targetTile = this.battleGame.map.getTile(x, y);
     const distance = currentTile.distance(targetTile);
 
@@ -174,6 +202,6 @@ export default class BattleUnit {
   }
 
   getRealPosition() {
-    return this.getLocateTile().getRealPosition();
+    return this.tile.getRealPosition();
   }
 }

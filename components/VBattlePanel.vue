@@ -27,10 +27,10 @@ const showUnit = computed(() => {
 const useActionPoint = computed(() => {
   const hoverTile = battleGame.hoverTile;
 
-  if (battleGame.state == "UNIT_MOVE") {
+  if (battleGame.state == "UNIT_SELECT") {
     if (hoverTile && hoverTile.state == "ENABLE_MOVE") {
       const target = battleGame.selectedUnit;
-      const unitTile = target.getLocateTile(target.x, target.y);
+      const unitTile = target.tile;
       return unitTile.distance(hoverTile);
     }
   }

@@ -17,9 +17,9 @@ const props = defineProps({
   },
 });
 
-props.unit.battleGame.state = "UNIT_MOVE";
+props.unit.battleGame.state = "UNIT_SELECT";
 props.unit.battleGame.selectedUnit = props.unit;
 
 props.unit.battleGame.map.tiles.forEach((tile) => (tile.state = "DISABLE"));
-props.unit.getMoveableTiles().forEach((tile) => (tile.state = "ENABLE_MOVE"));
+props.unit.moveableTiles.forEach((tile) => (tile.state = "ENABLE_MOVE"));
 </script>
