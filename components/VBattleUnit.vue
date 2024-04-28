@@ -1,23 +1,17 @@
 <template>
-  <div v-if="unit.realPosition" class="absolute w-[50px] h-[50px] transition-all duration-100 pointer-events-none" :style="{
-    top: unit.realPosition.y + 'px',
-    left: unit.realPosition.x + 'px'
-  }" ref="unitRef">
-    <div
-      class="unit-shape w-[15px] ml-px absolute top-[5px]"
-      :style="{
-        transform: `rotate(${rotate}deg)`,
-        'border-bottom': `34px solid ${unit.color}`,
-      }"
-    ></div>
-    <span
-      class="absolute w-full text-center ml-[-1px]"
-      :class="{
-        'bottom-0': unit.direction != 'BOTTOM',
-        'top-0': unit.direction == 'BOTTOM',
-      }"
-      >{{ unit.amount }}</span
-    >
+  <div v-if="unit.realPosition" class="absolute w-[50px] h-[50px] transition-all duration-100 pointer-events-none"
+    :style="{
+      top: unit.realPosition.y + 'px',
+      left: unit.realPosition.x + 'px'
+    }" ref="unitRef">
+    <div class="unit-shape w-[15px] ml-px absolute top-[5px]" :style="{
+      transform: `rotate(${rotate}deg)`,
+      'border-bottom': `34px solid ${unit.color}`,
+    }"></div>
+    <span class="absolute w-full text-center ml-[-1px] text-[8px]" :class="{
+      'bottom-0': unit.direction != 'BOTTOM',
+      'top-0': unit.direction == 'BOTTOM',
+    }">{{ unit.amount }}</span>
   </div>
 </template>
 
@@ -41,8 +35,6 @@ const rotate = computed(() => {
     return 90;
   } else if (direction == "LEFT") {
     return 270;
-  } else {
-    console.log("Illegal Direction", direction);
   }
 });
 

@@ -93,6 +93,8 @@ export default class BattleGame {
   }
 
   passTurn() {
+    this.toNormalState();
+
     const currentTeamIndex = this.teams.findIndex(
       (team) => team.id == this.turnTeam.id
     );

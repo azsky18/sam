@@ -20,12 +20,27 @@ export default class BattleMap {
     );
   }
 
+  get pagePosition() {
+    if (!this.el) {
+      return null;
+    }
+
+    const rect = this.el.getBoundingClientRect();
+
+    return {
+      x: rect.x,
+      y: rect.y,
+    };
+  }
+
   get tiles() {
     return this.tiles1d;
   }
 
   getTile(x, y) {
-    return this.tiles2d[y][x];
+    if (this.tiles2d[y]) {
+      return this.tiles2d[y][x];
+    }
   }
 
   getTilesByDistance(tile, distance) {

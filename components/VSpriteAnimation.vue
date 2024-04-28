@@ -1,20 +1,16 @@
 <template>
-  <div
-    class="sprite"
-    :style="{
-      width: width + 'px',
-      height: height + 'px',
-      animation: `playv ${time}s steps(${vCount * 1 - 1}) ${loop}, playh ${
-        time / hCount
+  <div class="sprite absolute" :style="{
+    width: width + 'px',
+    height: height + 'px',
+    animation: `playv ${time}s steps(${vCount * 1 - 1}) ${loop}, playh ${time / hCount
       }s steps(${hCount * 1 - 1}) ${loop}`,
-      background: `url(${imgObj.src}) no-repeat`,
-      backgroundSize: `${imgWidth}px ${imgHeight}px`,
-      zIndex: 90,
-      position: 'absolute',
-      top: y + 'px',
-      left: x + 'px',
-    }"
-  ></div>
+    background: `url(${imgObj.src}) no-repeat`,
+    backgroundSize: `${imgWidth}px ${imgHeight}px`,
+    zIndex: 90,
+    position: 'absolute',
+    top: y + 'px',
+    left: x + 'px',
+  }"></div>
 </template>
 
 <script setup>
@@ -73,14 +69,17 @@ imgObj.src = "/_nuxt/" + props.img;
   from {
     background-position: 0 0;
   }
+
   to {
     background-position: 0 100%;
   }
 }
+
 @keyframes playh {
   from {
     background-position: 0 0;
   }
+
   to {
     background-position: 100% 0;
   }

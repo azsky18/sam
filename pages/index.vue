@@ -1,5 +1,4 @@
 <template>
-  <Main />
-
-  <UModals />
+  <Main></Main>
+  <UModals></UModals>
 </template>

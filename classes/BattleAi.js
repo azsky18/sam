@@ -10,9 +10,11 @@ export default class BattleAi {
   }
 
   async play() {
+    // 돌격 패턴
     for (const unit of this.battleGame.getUnits(this.myTeam)) {
       while (unit.actionPoint > 0) {
         if (this.enemyTeam.units.length <= 0) {
+          // 승리 선언
           return;
         }
 
@@ -23,21 +25,23 @@ export default class BattleAi {
         if (attackableUnits.length > 0) {
           await unit.attackTo(attackableUnits[0]);
         } else {
-          const targetTiles = this.enemyTeam.units.flatMap(
-            (unit) => unit.aroundTiles
-          );
-          const minValueTargetTileIndex = targetTiles
-            .map((t) => t.distance(unit))
-            .reduce((r, v, i, a) => (v >= a[r] ? r : i), -1);
-          const targetTile = targetTiles[minValueTargetTileIndex];
+          // 이걸 좀 바꿔보자
+          const targetTile = this.enemyTeam.units
+            .flatMap((unit) => unit.aroundTiles)
+            .filter((tile) => !tile.isLocateUnit)
+            .reduce((r, v) => (r.distance(unit) <= v.distance(unit) ? r : v));
 
-          const moveableTiles = unit.moveableTiles;
-          const minValueMoveableTileIndex = moveableTiles
+          const i = unit.moveableTiles
             .map((t) => t.distance(targetTile))
             .reduce((r, v, i, a) => (v >= a[r] ? r : i), -1);
-          const moveTile = moveableTiles[minValueMoveableTileIndex];
+
+          const moveTile = unit.moveableTiles[i];
 
           await unit.move(moveTile.x, moveTile.y);
+
+          unit.direction = unit.detectDirection(
+            targetTile.aroundTiles.find((t) => t.isLocateUnit)
+          );
         }
       }
     }
