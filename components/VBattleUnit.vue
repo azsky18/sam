@@ -1,6 +1,6 @@
 <template>
-  <div v-if="unit.realPosition" class="absolute w-[50px] h-[50px] transition-all duration-100 pointer-events-none"
-    :style="{
+  <div v-if="unit.realPosition"
+    class="absolute w-[50px] h-[50px] transition-top transition-left duration-75 pointer-events-none" :style="{
       top: unit.realPosition.y + 'px',
       left: unit.realPosition.x + 'px'
     }" ref="unitRef">

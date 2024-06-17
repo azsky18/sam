@@ -1,18 +1,17 @@
 <template>
-  <div ref="tileRef" class="tile w-[50px] h-[50px] border-[1px] border-red-50 absolute" :style="{
+  <ULink ref="tileRef" class="tile w-[50px] h-[50px] border-[1px] border-red-50 absolute" :style="{
     top: (tile.y * tile.size) + 'px',
-    left: (tile.x * tile.size) + 'px'
+    left: (tile.x * tile.size) + 'px',
+    background: tile.isZoc ? 'repeating-linear-gradient(45deg, #F5C9CC, #F5C9CC 10px, #F1DFE4 0, #F1DFE4 20px)' : ''
   }" :class="{
     'bg-black': ['DISABLE', 'NORMAL'].includes(tile.state),
     'bg-gray-200': ['ENABLE_MOVE'].includes(tile.state),
-    /*'bg-red-100': tile.isZoc,*/
     'bg-red-400': ['ENABLE_ATTACK'].includes(tile.state),
   }" @mousedown.left="selectTile" @mousedown.right="cancelTile" @mouseover="hoverTile" @contextmenu.prevent>
     <div class="relative">
       <span class="absolute top-0 right-1 text-xs">({{ tile.x }}, {{ tile.y }})</span>
-      <slot></slot>
     </div>
-  </div>
+  </ULink>
 </template>
 
 <script setup>
@@ -41,20 +40,23 @@ const cancelTile = (e) => {
   if (battleGame.state != 'NORMAL') {
     battleGame.toNormalState();
   } else {
-    contextMenu.open([
-      {
-        label: '이동',
-        onClick: () => {
-          console.log('이동을 클릭')
+    contextMenu.open({
+      tile: props.tile,
+      menu: props.tile.isLocateUnit ? [
+        {
+          label: '이동',
+          onClick: () => {
+            console.log('이동을 클릭')
+          }
+        },
+        {
+          label: '분할',
+          onClick: () => {
+            console.log('분할을 클릭')
+          }
         }
-      },
-      {
-        label: '분할',
-        onClick: () => {
-          console.log('분할을 클릭')
-        }
-      }
-    ]);
+      ] : []
+    });
   }
 };
 

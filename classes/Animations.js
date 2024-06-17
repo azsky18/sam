@@ -5,7 +5,7 @@ export default class Animations {
 
   constructor() {
     this.items = [
-      new Animation("/assets/img/sprite/explosion.png", 50, 50, 5, 5, 1, 0.3),
+      new Animation("/assets/img/sprite/explosion.png", 50, 50, 5, 5, 1, 0.2),
     ];
   }
 

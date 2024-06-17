@@ -9,9 +9,9 @@ const useContextMenu = () => {
       virtualElement: {
         getBoundingClientRect: () => ({}),
       },
-      menuItems: [],
-      open: (menuItems) => {
-        contextMenu.menuItems = menuItems;
+      contents: {},
+      open: (contents) => {
+        contextMenu.contents = contents;
 
         const top = unref(y) - unref(windowY);
         const left = unref(x);

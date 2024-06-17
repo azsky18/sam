@@ -1,8 +1,31 @@
 <template>
-  <a href="javascript:void(0)" class="w-[1280px] h-[1024px] bg-slate-600 absolute" ref="element">
+  <div class="w-[1280px] h-[1024px] bg-slate-600 absolute" ref="element">
     <div class="relative">
       <VBattleTile v-for="tile in map.tiles1d" :tile="tile" />
       <VBattleUnit v-for="unit in units" :unit="unit" />
+
+      <!-- 타일 인포 -->
+      <!--
+      <div v-if="hoverTile" class="absolute w-[200px] h-[200px] bg-black border border-slate-50 pointer-events-none"
+        :style="{ top: (hoverTile?.realPosition.y - 25) + 'px', left: (hoverTile?.realPosition.x + hoverTile?.size + 75) + 'px' }">
+        <div v-if="selectedUnit">
+          <ul>
+            <li>지휘관 : 조운</li>
+            <li>병종 : 창</li>
+            <li>병력 : {{ selectedUnit?.amount ?? "-" }}</li>
+            <li>
+              활동력 : {{ selectedUnit?.actionPoint }}
+              {{ useActionPoint > 0 ? `(-${useActionPoint})` : "" }}
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h5>지형</h5>
+          <p>Move Point : {{ hoverTile.movePoint }}</p>
+          <p>ZOC : {{ hoverTile.isZoc }}</p>
+        </div>
+      </div>
+      -->
 
       <template v-for="ani in animations.items">
         <VSpriteAnimation v-if="ani.run" :img="ani.img" :width="ani.width" :height="ani.height" :vCount="ani.vCount"
@@ -11,16 +34,22 @@
 
       <UContextMenu v-model="contextMenu.isOpen" :virtual-element="contextMenu.virtualElement">
         <div class="p-4">
-          <ul v-for="menuItem in contextMenu.menuItems">
-            <li>
-              <a href="javascript:void(0)" @click="menuItem.onClick(); contextMenu.close();">{{ menuItem.label }}</a>
-            </li>
-          </ul>
+          <div>
+            <h5>지형</h5>
+            <p>Move Point : {{ contextMenu.contents.tile.movePoint }}</p>
+          </div>
+          <template v-if=contextMenu.contents.menu>
+            <UDivider />
+            <ul v-for="menuItem in contextMenu.contents.menu">
+              <li>
+                <ULink @click="menuItem.onClick(); contextMenu.close();">{{ menuItem.label }}</ULink>
+              </li>
+            </ul>
+          </template>
         </div>
       </UContextMenu>
     </div>
-  </a>
-
+  </div>
 </template>
 
 <script setup>
@@ -41,7 +70,23 @@ const props = defineProps({
   }
 });
 
+const battleGame = useBattleGame();
 const contextMenu = useContextMenu();
+const hoverTile = computed(() => battleGame.hoverTile);
+const selectedUnit = computed(() => battleGame.selectedUnit);
+const useActionPoint = computed(() => {
+  const hoverTile = battleGame.hoverTile;
+
+  if (battleGame.state == "UNIT_SELECT") {
+    if (hoverTile && hoverTile.state == "ENABLE_MOVE") {
+      const target = battleGame.selectedUnit;
+      const unitTile = target.tile;
+      return unitTile.distance(hoverTile);
+    }
+  }
+
+  return 0;
+});
 
 function dragElement(elmnt) {
   var pos1 = 0,
@@ -56,6 +101,10 @@ function dragElement(elmnt) {
   }
 
   function dragMouseDown(e) {
+    if (e.button != 0) {
+      return;
+    }
+
     e.preventDefault();
     pos3 = e.clientX;
     pos4 = e.clientY;
